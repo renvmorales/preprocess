@@ -39,9 +39,11 @@ print('\nTotal missing values: ', df.isnull().values.sum())
 print('\nTotal missing values per column:')
 print(df.isnull().sum().to_string(index=True))
 
-# print('\n', df[df.iloc[:,0]=='?'].iloc[:,0])
 
 
+# percentual missing values per column
+print('\nPercentual missing values per column:')
+print((df.isnull().sum()/df.shape[0]*100).to_string(index=True))
 
 
 
