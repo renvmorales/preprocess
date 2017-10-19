@@ -1,6 +1,7 @@
 
 
 import pandas as pd 
+import numpy as np
 
 
 
@@ -13,7 +14,7 @@ col_names = ['BI-RADS','Age','Shape','Margin','Density','Severity']
 
 
 print('\nFirst 10 observations of dataset:')
-df = pd.read_csv(url, header=None, names=col_names)
+df = pd.read_csv(url, header=None, names=col_names, na_values=['?'])
 print(df.head(10))
 
 
@@ -31,12 +32,31 @@ print('Number of columns: ', df.shape[1])
 
 
 # total missing values
-print('\nTotal missing values: ', (df.values=='?').sum())
+print('\nTotal missing values: ', df.isnull().values.sum())
 
 
 # total missing values per column
 print('\nTotal missing values per column:')
-print(df.applymap(lambda x: x=='?').sum(axis=0).to_string(index=True))
+print(df.isnull().sum().to_string(index=True))
+
+# print('\n', df[df.iloc[:,0]=='?'].iloc[:,0])
 
 
 
+
+
+######################################################
+
+# impute missing values using the median of the same output class
+for i in range(len(df.columns)):
+	index = [ind for ind, j in enumerate(list(df.iloc[:,i].values)) if np.isnan(j)]
+	for k in index:
+		med = df[df.iloc[:,-1]==df.iloc[k,-1]].iloc[:,i].median()
+		df.iloc[k,i] = med
+
+
+print('\nImputing missing values ...')
+
+
+
+print('\nTotal missing values: ', df.isnull().values.sum())
