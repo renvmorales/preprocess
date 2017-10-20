@@ -70,12 +70,12 @@ for i in range(len(df.columns)):
 
 
 
-# # exclude out of expected range values
-# df.iloc[df.iloc[:,0]==55, 0] = np.nan
-# df.iloc[df.iloc[:,0]==0, 0] = np.nan
-# df.iloc[df.iloc[:,0]==6, 0] = np.nan
+# exclude out of expected range values
+df.loc[df.loc[:,'BI-RADS']==55, 'BI-RADS'] = np.nan
+df.loc[df.loc[:,'BI-RADS']==0, 'BI-RADS'] = np.nan
+df.loc[df.loc[:,'BI-RADS']==6, 'BI-RADS'] = np.nan
 
-print('Number of different elements for BI-RADS column: ', pd.unique(df['BI-RADS']))
+# print('Number of different elements for BI-RADS column: ', pd.unique(df['BI-RADS']))
 
 
 
