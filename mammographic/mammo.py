@@ -10,7 +10,7 @@ import seaborn as sns
 url = 'http://archive.ics.uci.edu/ml/machine-learning-databases/mammographic-masses/mammographic_masses.data'
 
 # column names to be placed on the dataframe 
-col_names = ['BI-RADS','Age','Shape','Margin','Density','Severity']
+col_names = ['BI-RADS','AGE','SHAPE','MARGIN','DENSITY','SEVERITY']
 
 
 
@@ -70,9 +70,11 @@ for i in range(len(df.columns)):
 
 
 
+print('\nExcluding and correcting out-of-range values ...')
+
 # manually exclude out-of-expected range values
-df.loc[df.loc[:,'BI-RADS']==55, 'BI-RADS'] = np.nan
-df.loc[df.loc[:,'BI-RADS']==0, 'BI-RADS'] = np.nan
+df.loc[df.loc[:,'BI-RADS']==55, 'BI-RADS'] = 5
+df.loc[df.loc[:,'BI-RADS']==0, 'BI-RADS'] = 5
 df.loc[df.loc[:,'BI-RADS']==6, 'BI-RADS'] = np.nan
 
 
@@ -105,32 +107,33 @@ print('Total missing values after imputation: ', df.isnull().values.sum())
 ######################################################################
 # discretize 'Age' column values with fixed bin size
 
-print("\nDiscretizing 'Age' columns ...")
+print("\nDiscretizing 'AGE' column ...")
 
-Age_max = df['Age'].max()
-Age_min = df['Age'].min()
-n_bins = 6
+Age_max = df['AGE'].max() # max age value
+Age_min = df['AGE'].min() # min age value
+n_bins = 6  # selected number of bins
 
-
+# every pair of points defines the limits of the box
 limits = np.arange(Age_min, Age_max+0.1, (Age_max-Age_min)/n_bins)
 
+# centroid of every bin represents all values inside 
 ds_mean = []
 for i in range(len(limits)-1):
 	ds_mean.append((limits[i+1]+limits[i])/2)
 
-ds_mean = np.floor(np.array(ds_mean))
+ds_mean = np.floor(np.array(ds_mean))  # reduce to integer values
 limits = limits[1:]
 
 
 for i in range(df.shape[0]):
-	ind = list(df.loc[i, 'Age']<=limits).index(True)
-	df.loc[i, 'Age'] = ds_mean[ind]
+	ind = list(df.loc[i, 'AGE']<=limits).index(True)
+	df.loc[i, 'AGE'] = ds_mean[ind]
 
 
 # df.loc[i, 'Age'] = df.loc[i, 'Age'].applymap(lambda x: ds_mean(list(x<=limits).index(True)) )
 
 
-print('Different types values after imputation', pd.unique(df.loc[:,'Age']))
+print('Different types values after imputation', pd.unique(df.loc[:,'AGE']))
 
 
 
