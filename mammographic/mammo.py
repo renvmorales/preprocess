@@ -113,8 +113,10 @@ Age_max = df['AGE'].max() # max age value
 Age_min = df['AGE'].min() # min age value
 n_bins = 6  # selected number of bins
 
+
 # every pair of points defines the limits of the box
 limits = np.arange(Age_min, Age_max+0.1, (Age_max-Age_min)/n_bins)
+
 
 # centroid of every bin represents all values inside 
 ds_mean = []
@@ -125,15 +127,16 @@ ds_mean = np.floor(np.array(ds_mean))  # reduce to integer values
 limits = limits[1:]
 
 
-for i in range(df.shape[0]):
-	ind = list(df.loc[i, 'AGE']<=limits).index(True)
-	df.loc[i, 'AGE'] = ds_mean[ind]
+# define function to discretize
+def get_centroid(x, limits, ds_mean):
+	ind = list(x<=limits).index(True)
+	return ds_mean[ind]
+
+# vectorized discretization
+df['AGE'] = df['AGE'].apply(get_centroid, args=(limits, ds_mean) )
 
 
-# df.loc[i, 'Age'] = df.loc[i, 'Age'].applymap(lambda x: ds_mean(list(x<=limits).index(True)) )
-
-
-print('Different types values after imputation', pd.unique(df.loc[:,'AGE']))
+print('Different types values after imputation', pd.unique(df['AGE']))
 
 
 
