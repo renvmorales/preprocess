@@ -63,7 +63,7 @@ print('\n>>>>Checking consistency limits ...')
 for i in range(len(df.columns)):
 	# min and max for BI-RADS column
 	print("\n[Min - max] interval for '%s' column: [%d - %d]" % (df.columns[i], df.iloc[:,i].min(), df.iloc[:,i].max()))
-	numtypes = pd.unique(df.iloc[:,i])
+	numtypes = np.sort(pd.unique(df.iloc[:,i]))
 	if len(numtypes) < 20:
 		print('Different types values: ', numtypes)
 	else:
@@ -145,7 +145,8 @@ def get_centroid(x, limits, ds_mean):
 df['AGE'] = df['AGE'].apply(get_centroid, args=(limits, ds_mean) )
 
 
-print('Different types values after imputation', pd.unique(df['AGE']))
+print('Different types values after imputation', 
+	np.sort(pd.unique(df['AGE'])) )
 
 
 
