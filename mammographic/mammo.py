@@ -41,13 +41,16 @@ print(df.isnull().sum().to_string(index=True))
 
 # percentual missing values per column
 print('\nPercentual missing values per column:')
-print((df.isnull().sum()/df.shape[0]*100).to_string(index=True))
+# print((df.isnull().sum()/df.shape[0]*100).to_string(index=True))
+print((df.isnull().sum()/df.shape[0]*100).apply(lambda x: '%.2f %%' % x).to_string(index=True))
 
+
+total = df.shape[0] * df.shape[1]
 
 # total missing values
-print('\nTotal missing values: ', df.isnull().values.sum())
+print('\nTotal missing values: %d   (%.1f %%)' % (df.isnull().values.sum(), 100*df.isnull().values.sum()/total) )
 # number of objects with at least one missing value
-print('Affected number of objects: ', df.isnull().any(axis=1).sum())
+print('Affected number of objects: %d   (%.1f %%)' % (df.isnull().any(axis=1).sum(), 100*df.isnull().any(axis=1).sum()/df.shape[0]) )
 
 
 
