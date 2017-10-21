@@ -70,17 +70,20 @@ for i in range(len(df.columns)):
 
 
 
-# exclude out of expected range values
+# manually exclude out-of-expected range values
 df.loc[df.loc[:,'BI-RADS']==55, 'BI-RADS'] = np.nan
 df.loc[df.loc[:,'BI-RADS']==0, 'BI-RADS'] = np.nan
 df.loc[df.loc[:,'BI-RADS']==6, 'BI-RADS'] = np.nan
 
-# print('Number of different elements for BI-RADS column: ', pd.unique(df['BI-RADS']))
+
+
 
 
 
 ######################################################
 # missing values imputation on the dataset  
+
+print('\nImputing missing values ...')
 
 # impute missing values using the median of the same output class
 for i in range(len(df.columns)):
@@ -90,17 +93,64 @@ for i in range(len(df.columns)):
 		df.iloc[k,i] = med
 
 
-print('\nImputing missing values ...')
-
 # check if there is any missing value left
-print('Total missing values: ', df.isnull().values.sum())
+print('Total missing values after imputation: ', df.isnull().values.sum())
+
+
 
 
 
 
 
 ######################################################################
-# dataset normalization 
+# discretize 'Age' column values with fixed bin size
 
-print('Number of different elements per column: ',pd.unique(df['BI-RADS']))
+print("\nDiscretizing 'Age' columns ...")
+
+Age_max = df['Age'].max()
+Age_min = df['Age'].min()
+n_bins = 6
+
+
+limits = np.arange(Age_min, Age_max+0.1, (Age_max-Age_min)/n_bins)
+
+ds_mean = []
+for i in range(len(limits)-1):
+	ds_mean.append((limits[i+1]+limits[i])/2)
+
+ds_mean = np.floor(np.array(ds_mean))
+limits = limits[1:]
+
+
+for i in range(df.shape[0]):
+	ind = list(df.loc[i, 'Age']<=limits).index(True)
+	df.loc[i, 'Age'] = ds_mean[ind]
+
+
+# df.loc[i, 'Age'] = df.loc[i, 'Age'].applymap(lambda x: ds_mean(list(x<=limits).index(True)) )
+
+
+print('Different types values after imputation', pd.unique(df.loc[:,'Age']))
+
+
+
+
+
+
+######################################################################
+# dataset max-min normalization 
+
+print('\nNormalizing dataset ...')
+df = df.apply(lambda x: (x-x.min())/(x.max()-x.min()))
+
+
+
+
+
+
+######################################################################
+# display final pre-processed dataset
+
+print('\nPre-processed Final dataset:')
+print(df.applymap(lambda x: '%.2f' % x).head(10))
 
