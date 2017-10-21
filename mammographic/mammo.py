@@ -23,9 +23,6 @@ print(df.head(10))
 
 #######################################################
 # general information on  (total missing values, number of affected objects...)
-# check also consistency of data (range value, categorical limits...)
-# plot histograms for evey column
-
 
 # list of all attribute names
 print('\nColumn names:\n', list(df.columns.values))
@@ -54,6 +51,14 @@ print('Affected number of objects: ', df.isnull().any(axis=1).sum())
 
 
 
+
+
+######################################################################
+# check consistency of data (range value, categorical limits...)
+# plot histograms for evey column
+
+print('\n>>>>Checking consistency limits ...')
+
 # identify limits and all possible types of values loop
 for i in range(len(df.columns)):
 	# min and max for BI-RADS column
@@ -70,9 +75,14 @@ for i in range(len(df.columns)):
 
 
 
-print('\nExcluding and correcting out-of-range values ...')
 
+
+
+################################################################
 # manually exclude out-of-expected range values
+
+print('\n>>>>Excluding and correcting out-of-range values ...')
+
 df.loc[df.loc[:,'BI-RADS']==55, 'BI-RADS'] = 5
 df.loc[df.loc[:,'BI-RADS']==0, 'BI-RADS'] = 5
 df.loc[df.loc[:,'BI-RADS']==6, 'BI-RADS'] = np.nan
@@ -85,7 +95,7 @@ df.loc[df.loc[:,'BI-RADS']==6, 'BI-RADS'] = np.nan
 ######################################################
 # missing values imputation on the dataset  
 
-print('\nImputing missing values ...')
+print('\n>>>>Imputing missing values ...')
 
 # impute missing values using the median of the same output class
 for i in range(len(df.columns)):
@@ -103,11 +113,10 @@ print('Total missing values after imputation: ', df.isnull().values.sum())
 
 
 
-
 ######################################################################
 # discretize 'Age' column values with fixed bin size
 
-print("\nDiscretizing 'AGE' column ...")
+print("\n>>>>Discretizing 'AGE' column ...")
 
 Age_max = df['AGE'].max() # max age value
 Age_min = df['AGE'].min() # min age value
@@ -146,7 +155,7 @@ print('Different types values after imputation', pd.unique(df['AGE']))
 ######################################################################
 # dataset max-min normalization 
 
-print('\nNormalizing dataset ...')
+print('\n>>>>Normalizing dataset ...')
 df = df.apply(lambda x: (x-x.min())/(x.max()-x.min()))
 
 
@@ -155,8 +164,25 @@ df = df.apply(lambda x: (x-x.min())/(x.max()-x.min()))
 
 
 ######################################################################
-# display final pre-processed dataset
+# display final preprocessed dataset
 
-print('\nPre-processed Final dataset:')
+print('\nSample of preprocessed final dataset:')
 print(df.applymap(lambda x: '%.2f' % x).head(10))
 
+
+
+
+
+#########################################################################
+# convert data to array and save as file
+
+print('\n>>>>Converting dataset to array and saving to file ...')
+np.savez('mammo_df', 
+	X=df.iloc[:,1:-1].as_matrix(), 
+	Y=df.iloc[:,-1].as_matrix(), 
+	BIRADS=df.iloc[:,0].as_matrix())
+
+
+
+
+print('\nPreprocessing data complete.')
